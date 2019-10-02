@@ -296,6 +296,28 @@ public class Connector {
         return json;
     }
 
+
+    /**
+     * Envia una solicitud de cambio de contrasena
+     * @param mail String
+     * @return boolean con verificacion de si se envio el correo
+     */
+    public static boolean recoverPassword(String mail) {
+        String url = serverUrl+"recover/"+mail;
+        boolean enviado = false;
+        JSONArray json=null;
+        try {
+            json = readJsonFromUrl(url);
+            JSONObject jsono = json.getJSONObject(0);
+            if (jsono.getBoolean("enviado")) {
+                enviado = true;
+            }
+        } catch (Exception e) {
+
+        }
+        return enviado;
+    }
+
     public static void main(String[] args) {
 
     }
