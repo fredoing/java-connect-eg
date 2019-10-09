@@ -7,11 +7,7 @@
  * @since 25-09-2019
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -20,6 +16,18 @@ import java.nio.charset.Charset;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.File;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.util.EntityUtils;
 
 public class Connector {
 
@@ -318,6 +326,41 @@ public class Connector {
         return enviado;
     }
 
+
+    public static void uploadImage(File file, int idrest) {
+        HttpClient httpclient = new DefaultHttpClient();
+        httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+
+        String uri = "http://proyectofredoyandy.online/addimg/"+String.valueOf(idrest);
+        HttpPost httppost = new HttpPost(uri);
+
+
+        MultipartEntity mpEntity = new MultipartEntity();
+        ContentBody cbFile = new FileBody(file, "image/jpeg");
+        mpEntity.addPart("myfile", cbFile);
+
+        try {
+            httppost.setEntity(mpEntity);
+            System.out.println("executing request " + httppost.getRequestLine());
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+
+            System.out.println(response.getStatusLine());
+            if (resEntity != null) {
+                System.out.println(EntityUtils.toString(resEntity));
+            }
+            if (resEntity != null) {
+                resEntity.consumeContent();
+            }
+        } catch (Exception e) {
+
+        }
+
+
+        httpclient.getConnectionManager().shutdown();
+    }
+
+    
     public static void main(String[] args) {
 
     }
